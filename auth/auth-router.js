@@ -32,9 +32,7 @@ router.post("/login", (req, res, next) => {
     .then((user) => {
       console.log("logged in user----->", user);
       if (user && bcrypt.compareSync(credentials.password, user.password)) {
-        // add the req.session cookie here and add user to it
-        req.session.user = user;
-        console.log(`req.session.user---->`, req.session.user);
+        // add TOKEN jwt
 
         res.json({ logged_in: `welcome ${user.username}, have cookie` });
       } else {
@@ -49,16 +47,7 @@ router.post("/login", (req, res, next) => {
 //GET /api/auth/logout
 //log out and destroy cookie
 router.get("/logout", (req, res) => {
-  console.log("logging out endpoint------->");
-  if (req.session) {
-    req.session.destroy((err) => {
-      err
-        ? res.json({ message: "you cant logout yet" })
-        : res.json({ message: "logged out" });
-    });
-  } else {
-    res.json({ message: "this user doesn't even exist at all" });
-  }
+  //
 });
 
 module.exports = router;

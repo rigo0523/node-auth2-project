@@ -4,7 +4,7 @@ const Users = require("./users-model");
 const { restricted } = require(`../middleware/restricted-middleware`);
 
 //GET /api/users
-router.get("/", restricted(), (req, res, next) => {
+router.get("/", (req, res, next) => {
   Users.find()
     .then((user) => {
       console.log(user);
