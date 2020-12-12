@@ -2,7 +2,7 @@ const db = require("../database/dbConfig");
 
 //Get users
 function find() {
-  return db("users").select("id", "username", "password");
+  return db("users").select("id", "username", "role").orderBy("id");
 }
 
 //POST USER

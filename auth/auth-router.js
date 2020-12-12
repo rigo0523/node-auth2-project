@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const User = require("../users/users-model");
+const jwt = require("jsonwebtoken");
 
 //POST /api/auth/register
 router.post("/register", (req, res, next) => {
@@ -13,8 +14,10 @@ router.post("/register", (req, res, next) => {
   User.add(user)
     .then((newUser) => {
       console.log("newUser---->", newUser);
+      const token = generateToken(newUser);
+      console.log("token register----->", token);
       if (newUser) {
-        res.status(201).json({ new_user_created: newUser });
+        res.status(201).json({ new_user_created: newUser, token });
       } else {
         res.status(404).json({ cant_post_user: "Can not post the user" });
       }
@@ -32,11 +35,9 @@ router.post("/login", (req, res, next) => {
     .then((user) => {
       console.log("logged in user----->", user);
       if (user && bcrypt.compareSync(credentials.password, user.password)) {
-        // add the req.session cookie here and add user to it
-        req.session.user = user;
-        console.log(`req.session.user---->`, req.session.user);
-
-        res.json({ logged_in: `welcome ${user.username}, have cookie` });
+        // add TOKEN jwt
+        const token = generateToken(user);
+        res.json({ logged_in: `welcome ${user.username}, have cookie`, token });
       } else {
         res.json({ no_credentcials: `Please enter correct credentials` });
       }
@@ -49,16 +50,22 @@ router.post("/login", (req, res, next) => {
 //GET /api/auth/logout
 //log out and destroy cookie
 router.get("/logout", (req, res) => {
-  console.log("logging out endpoint------->");
-  if (req.session) {
-    req.session.destroy((err) => {
-      err
-        ? res.json({ message: "you cant logout yet" })
-        : res.json({ message: "logged out" });
-    });
-  } else {
-    res.json({ message: "this user doesn't even exist at all" });
-  }
+  //
 });
+//TOKENS
+function generateToken(user) {
+  //payload
+  const payload = {
+    subID: user.id,
+    username: user.username,
+    role: user.role,
+  };
+  //options
+  const options = {
+    expiresIn: "1d",
+  };
+  //return jwt.sign
+  return jwt.sign(payload, process.env.JWT_SECRET, options);
+}
 
 module.exports = router;
