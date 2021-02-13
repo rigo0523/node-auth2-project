@@ -5,6 +5,14 @@ function find() {
   return db("users").select("id", "username", "role").orderBy("id");
 }
 
+// function findRoles() {
+//   ///or join the roles as
+//   return db("users")
+//     .join("roles", "roles.id", "=", "users.id")
+//     .select("user.id", "user.name", "role.name")
+//     .orderBy("id");
+// }
+
 //POST USER
 function add(user) {
   return db("users")

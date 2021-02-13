@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
-const User = require("../users/users-model");
 const jwt = require("jsonwebtoken");
+const User = require("../users/users-model");
 
-//POST /api/auth/register
+//POST /api/auth/register   --> user = {username: "", password: ""}
 router.post("/register", (req, res, next) => {
   const user = req.body;
   //hashed password into user.password
@@ -17,7 +17,7 @@ router.post("/register", (req, res, next) => {
       const token = generateToken(newUser);
       console.log("token register----->", token);
       if (newUser) {
-        res.status(201).json({ new_user_created: newUser, token });
+        res.status(201).json({ newUser, token });
       } else {
         res.status(404).json({ cant_post_user: "Can not post the user" });
       }
@@ -27,7 +27,7 @@ router.post("/register", (req, res, next) => {
     });
 });
 
-//POST /api/auth/login
+//POST /api/auth/login --> user = {username: "", password: ""}
 router.post("/login", (req, res, next) => {
   const credentials = req.body;
 
@@ -47,11 +47,6 @@ router.post("/login", (req, res, next) => {
     });
 });
 
-//GET /api/auth/logout
-//log out and destroy cookie
-router.get("/logout", (req, res) => {
-  //
-});
 //TOKENS
 function generateToken(user) {
   //payload
