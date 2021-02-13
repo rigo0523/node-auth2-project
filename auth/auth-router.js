@@ -12,7 +12,7 @@ router.post("/register", (req, res, next) => {
   //adds the username and password with hashedpassword now
   User.add(user)
     .then((newUser) => {
-      console.log("newUser---->", newUser);
+      console.log("newUser---->", newUser, req.session);
       if (newUser) {
         res.status(201).json({ new_user_created: newUser });
       } else {
@@ -27,6 +27,7 @@ router.post("/register", (req, res, next) => {
 //POST /api/auth/login
 router.post("/login", (req, res, next) => {
   const credentials = req.body;
+  console.log("credentials------------------------>", credentials);
 
   User.findBy({ username: credentials.username })
     .then((user) => {
@@ -34,7 +35,7 @@ router.post("/login", (req, res, next) => {
       if (user && bcrypt.compareSync(credentials.password, user.password)) {
         // add the req.session cookie here and add user to it
         req.session.user = user;
-        console.log(`req.session.user---->`, req.session.user);
+        console.log(`req.session.user---->`, req.session.user, req.session);
 
         res.json({ logged_in: `welcome ${user.username}, have cookie` });
       } else {
