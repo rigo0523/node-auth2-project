@@ -13,13 +13,14 @@ router.get("/", restricted(), (req, res, next) => {
   if (role === "admin") {
     Users.find()
       .then((user) => {
-        console.log(user);
+        console.log("users----->", user);
         res.json(user);
       })
       .catch((err) => {
         next(err);
       });
   } else {
+    // if student, can only see own self login user info, not list of users
     Users.findById(subID)
       .then((selfUser) => {
         res.status(200).json({ self_user: selfUser });
